@@ -70,9 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Jace\Jace.csproj">
+    <ProjectReference Include="..\Jace\JacePxd.csproj">
       <Project>{91cc2c02-72ea-43af-95b0-f45edf91538e}</Project>
-      <Name>Jace</Name>
+      <Name>JacePxd</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

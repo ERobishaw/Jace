@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jace\Jace.csproj" />
+    <ProjectReference Include="..\Jace\JacePxd.csproj" />
   </ItemGroup>
 
   <ItemGroup>

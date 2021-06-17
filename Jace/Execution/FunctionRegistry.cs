@@ -41,8 +41,8 @@ namespace Jace.Execution
 
             Type funcType = function.GetType();
 
-            if (!funcType.FullName.StartsWith("System.Func"))
-                throw new ArgumentException("Only System.Func delegates are permitted.", "function");
+            if (!funcType.FullName.StartsWith("System.Func") && funcType != typeof(CalculationEngine.DoubleResultDelegate))
+                throw new ArgumentException($"Only System.Func delegates or {nameof(CalculationEngine.DoubleResultDelegate)} delegates are permitted.", nameof(function));
 
             foreach (Type genericArgument in funcType.GenericTypeArguments)
                 if (genericArgument != typeof(double))

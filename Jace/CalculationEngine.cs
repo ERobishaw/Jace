@@ -103,7 +103,37 @@ namespace Jace
         {
             return Calculate(formulaText, new Dictionary<string, double>());
         }
+        public Func<IDictionary<string, double>, string, double> Setup(ref IDictionary<string, double> variables)
+        {
+            variables = new Dictionary<string, double>(variables, StringComparer.OrdinalIgnoreCase); //VariablesDictionary(EngineUtil.ConvertVariableNamesToLowerCase(variables));
+            VerifyVariableNames(variables);
 
+            // Add the reserved variables to the dictionary
+            foreach (ConstantInfo constant in ConstantRegistry)
+                variables.Add(constant.ConstantName, constant.Value);
+
+            return (doubles, s) => Calculate_Safe_Internal(s, doubles);
+        }
+
+        private double Calculate_Safe_Internal(string formulaText, IDictionary<string, double> variables)
+        {
+            if (string.IsNullOrEmpty(formulaText))
+                throw new ArgumentNullException("formulaText");
+
+            if (variables == null)
+                throw new ArgumentNullException("variables");
+
+            if (IsInFormulaCache(formulaText, out var function))
+            {
+                return function(variables);
+            }
+            else
+            {
+                Operation operation = BuildAbstractSyntaxTree(formulaText);
+                function = BuildFormula(formulaText, operation);
+                return function(variables);
+            }
+        }
         public double Calculate(string formulaText, IDictionary<string, double> variables)
         {
             if (string.IsNullOrEmpty(formulaText))
@@ -354,5 +384,23 @@ namespace Jace
                     throw new ArgumentException(string.Format("The name \"{0}\" is a function name. Parameters cannot have this name.", variableName), "variables");
             }
         }
+    }
+
+    public class VariablesDictionary : Dictionary<string, double>
+    {
+        public IDictionary<string, double> _Original;
+        public VariablesDictionary(IDictionary<string, double> original) :base(original, StringComparer.OrdinalIgnoreCase)
+        {
+            _Original = original;
+        }
+
+        public new void Add(string name, double value)
+        {
+            base[name.ToLowerInvariant()] = value;
+            _Original[name] = value;
+        }
+        //public new double this(string)
+
+
     }
 }

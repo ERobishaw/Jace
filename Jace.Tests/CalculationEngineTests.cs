@@ -319,6 +319,8 @@ namespace Jace.Tests
         public void TestFormulaBuilderCompiled()
         {
             CalculationEngine engine = new CalculationEngine(CultureInfo.InvariantCulture, ExecutionMode.Compiled);
+            
+
             Func<int, double, double> function = (Func<int, double, double>)engine.Formula("var1+2*(3*age)")
                 .Parameter("var1", DataType.Integer)
                 .Parameter("age", DataType.FloatingPoint)
@@ -327,6 +329,31 @@ namespace Jace.Tests
 
             double result = function(2, 4);
             Assert.AreEqual(26.0, result);
+        }
+
+        [TestMethod]
+        public void TestPreSetBuilder()
+        {
+            CalculationEngine engine = new CalculationEngine();
+
+            string equation = "var1+2*(3*age)";
+
+
+            IDictionary<string, double> variables = new Dictionary<string, double>();
+            variables.Add("Var1", 2);
+            variables.Add("Age", 4);
+
+
+
+            var f = engine.Setup(ref variables);
+
+            double result = f(variables, equation);
+            Assert.AreEqual(26.0, result);
+            variables.Add("birthday", result);
+            
+            
+            double resultPlus1 = f(variables, "birthday+1");
+            Assert.AreEqual(result + 1, resultPlus1);
         }
 
         [TestMethod]
