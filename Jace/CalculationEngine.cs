@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Jace.Execution;
 using Jace.Operations;
@@ -112,6 +113,32 @@ namespace Jace
             foreach (ConstantInfo constant in ConstantRegistry)
                 variables.Add(constant.ConstantName, constant.Value);
 
+            return (doubles, s) => Calculate_Safe_Internal(s, doubles);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="variables">Must be a dictionary setup with string comparer ordinal ignore case</param>
+        /// <returns></returns>
+        public Func<IDictionary<string, double>, string, double> Setup(Dictionary<string, double> variables)
+        {
+            var firstDif = variables.FirstOrDefault(x => x.Key != x.Key.ToLower());
+            if (firstDif.Key != null)
+            {
+                //found one... check if key is invariant
+                if (!variables.ContainsKey(firstDif.Key.ToLower()) || !variables.ContainsKey(firstDif.Key.ToUpper()))
+                {
+                    throw new ArgumentException(
+                        $"The Dictionary {nameof(variables)} must be setup as StringComparer.OrdinalIgnoreCase or some other case insensitive variant. Use the other Overload otherwise.");
+                }
+            }
+            VerifyVariableNames(variables);
+
+            // Add the reserved variables to the dictionary
+            foreach (ConstantInfo constant in ConstantRegistry)
+            {
+                variables[constant.ConstantName]= constant.Value;
+            }
             return (doubles, s) => Calculate_Safe_Internal(s, doubles);
         }
 

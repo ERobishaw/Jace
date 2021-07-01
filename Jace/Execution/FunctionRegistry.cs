@@ -14,7 +14,7 @@ namespace Jace.Execution
         public FunctionRegistry(bool caseSensitive)
         {
             this.caseSensitive = caseSensitive;
-            this.functions = new Dictionary<string, FunctionInfo>();
+            this.functions = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         public FunctionInfo GetFunctionInfo(string functionName)

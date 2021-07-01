@@ -14,7 +14,7 @@ namespace Jace.Execution
         public ConstantRegistry(bool caseSensitive)
         {
             this.caseSensitive = caseSensitive;
-            this.constants = new Dictionary<string, ConstantInfo>();
+            this.constants = new Dictionary<string, ConstantInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IEnumerator<ConstantInfo> GetEnumerator()
